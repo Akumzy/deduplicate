@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ESNEXT",
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "removeComments": false,
+    "resolveJsonModule": false,
+    "esModuleInterop": true,
+    "sourceMap": false,
+    "declaration": true,
+    "outDir": "dist",
+    "types": ["jest", "node"]
+  },
+  "include": ["src/**/*"]
+}
