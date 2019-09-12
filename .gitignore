@@ -1,3 +1,7 @@
 node_modules
 package-lock.json
 dist
+coverage
+__test__/bucket
+__test__/new-file.zip
+__test__/*.json

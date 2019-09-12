@@ -11,6 +11,6 @@
     "outDir": "dist",
     "types": ["jest", "node"]
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "__test__/index.spec.ts"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }
