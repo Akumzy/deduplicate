@@ -70,7 +70,7 @@ export async function getHash(filePath: string, option: Deduplicate.GetHashOptio
   }
   const hash = createHash(option.algorithm).setEncoding('hex')
   await pipeline(createReadStream(filePath, { ...(option.readOption || {}), encoding: null }), hash)
-  return hash.read()
+  return hash.read() as string
 }
 
 export async function mergeBlocks(op: Deduplicate.MergeOptions) {

@@ -1,6 +1,6 @@
 {
   "name": "@akumzy/dd",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "main": "dist/index.js",
   "dependencies": {},
@@ -20,12 +20,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Akumzy/dedublication.git"
+    "url": "git+https://github.com/Akumzy/deduplicate.git"
   },
   "author": "\"Akuma Isaac Akuma",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Akumzy/dedublication/issues"
+    "url": "https://github.com/Akumzy/deduplicate/issues"
   },
-  "homepage": "https://github.com/Akumzy/dedublication#readme"
+  "homepage": "https://github.com/Akumzy/deduplicate#readme"
 }
