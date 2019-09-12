@@ -42,6 +42,24 @@ describe("Generate file hash and it's blocks", () => {
     done()
   })
 
+  test('rerun (create blocks, re-hash and compare) without passing blocks', async done => {
+    await remove(bucket)
+    await ensureDir(bucket)
+    await createBlocks({ input: file, bucket })
+    const newBlockHashs: string[] = []
+    for (const block of blocks.blocks) {
+      const path = join(bucket, block.hash),
+        exists = await pathExists(path),
+        h = await getHash(path)
+      expect(true).toEqual(exists)
+      expect(block.hash).toEqual(h)
+      newBlockHashs.push(h)
+    }
+    const blocksHash = blocks.blocks.map(b => b.hash)
+    expect(newBlockHashs).toEqual(blocksHash)
+    done()
+  })
+
   test('Merge file blocks back', async done => {
     const op: Deduplicate.MergeOptions = {
       output,
