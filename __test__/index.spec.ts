@@ -1,5 +1,5 @@
-import { Deduplicate, deduplicate, mergeBlocks, getHash, pipeline } from '../src'
-import { stat, writeFile, ensureDir, createWriteStream, createReadStream } from 'fs-extra'
+import { Deduplicate, deduplicate, mergeBlocks, getHash, pipeline, createBlocks } from '../src'
+import { stat, writeFile, ensureDir, createWriteStream, createReadStream, pathExists, remove } from 'fs-extra'
 import { join } from 'path'
 const file = join(__dirname, 'file.zip'),
   output = join(__dirname, 'new-file.zip'),
@@ -24,21 +24,24 @@ describe("Generate file hash and it's blocks", () => {
       done()
     })
   })
-  test('Save blocks to bucket and compare re-hash and compare', async done => {
+  test('create blocks, re-hash and compare', async done => {
+    await remove(bucket)
+    await ensureDir(bucket)
+    await createBlocks({ input: file, bucket, blocks: blocks.blocks })
     const newBlockHashs: string[] = []
     for (const block of blocks.blocks) {
-      const path = join(bucket, block.hash)
-      await pipeline(
-        createReadStream(file, { start: block.start, end: block.end - 1, encoding: null }),
-        createWriteStream(path, { encoding: null })
-      )
-      const h = await getHash(path)
+      const path = join(bucket, block.hash),
+        exists = await pathExists(path),
+        h = await getHash(path)
+      expect(true).toEqual(exists)
+      expect(block.hash).toEqual(h)
       newBlockHashs.push(h)
     }
     const blocksHash = blocks.blocks.map(b => b.hash)
     expect(newBlockHashs).toEqual(blocksHash)
     done()
   })
+
   test('Merge file blocks back', async done => {
     const op: Deduplicate.MergeOptions = {
       output,

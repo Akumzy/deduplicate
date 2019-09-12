@@ -35,6 +35,11 @@ export declare namespace Deduplicate {
     hash: string
     bucket: string
   }
+  interface CreateBlocksOptions {
+    input: string
+    bucket: string
+    blocks?: Block[]
+  }
 }
 
 export async function deduplicate(path: string, chuck = 4 * 1024 * 1024) {
@@ -63,11 +68,19 @@ export async function deduplicate(path: string, chuck = 4 * 1024 * 1024) {
     .digest('hex')
   return { hash, blocks } as Deduplicate.HashObject
 }
-
-export async function getHash(filePath: string, option: Deduplicate.GetHashOption = { algorithm: 'sha256' }) {
-  if (!option) {
-    throw new Error('here')
+export async function createBlocks({ input, bucket, blocks }: Deduplicate.CreateBlocksOptions) {
+  if (!blocks) {
+    blocks = (await deduplicate(input)).blocks
   }
+  for (const block of blocks) {
+    const path = join(bucket, block.hash)
+    await pipeline(
+      createReadStream(input, { encoding: null, start: block.start, end: block.end - 1 }),
+      createWriteStream(path, { encoding: null })
+    )
+  }
+}
+export async function getHash(filePath: string, option: Deduplicate.GetHashOption = { algorithm: 'sha256' }) {
   const hash = createHash(option.algorithm).setEncoding('hex')
   await pipeline(createReadStream(filePath, { ...(option.readOption || {}), encoding: null }), hash)
   return hash.read() as string
