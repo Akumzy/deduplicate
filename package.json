@@ -1,8 +1,17 @@
 {
   "name": "@akumzy/dd",
   "version": "0.0.5",
-  "description": "",
+  "description": "File de-duplication utilities",
   "main": "dist/index.js",
+  "keywords": [
+    "file",
+    "file splitting",
+    "blocks",
+    "chunk",
+    "upload",
+    "merge file",
+    "de-duplication"
+  ],
   "dependencies": {},
   "devDependencies": {
     "@types/fs-extra": "^8.0.0",
@@ -23,7 +32,7 @@
     "url": "git+https://github.com/Akumzy/deduplicate.git"
   },
   "author": "Akuma Isaac Akuma",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Akumzy/deduplicate/issues"
   },
