@@ -1,21 +1,4 @@
-# deduplicate [![Build Status](https://travis-ci.com/Akumzy/deduplicate.svg?branch=master)](https://travis-ci.com/Akumzy/deduplicate)
-
-## Introduction
-
-This package provides you all the necessaries utility functions to implements file de-duplication ranging from splitting file content to blocks, generating hash and merging the file blocks together without corrupting the file.
-
-## Installation
-
-```bash
-    npm install @akumzy/dd
-    # Or
-    yarn add @akumzy/dd
-```
-
-## Example
-
-```js
-const { deduplicate } = require('@akumzy/dd')
+const { deduplicate, createBlocks, mergeBlocks } = require('../dist')
 const { join } = require('path')
 async function main() {
   const filePath = join(__dirname, './index.js')
@@ -46,4 +29,3 @@ async function main() {
   // -> Will create a new file out of the blocks
 }
 main()
-```

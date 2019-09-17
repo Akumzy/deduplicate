@@ -1,6 +1,6 @@
 {
   "name": "@akumzy/dd",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "",
   "main": "dist/index.js",
   "dependencies": {},
@@ -22,7 +22,7 @@
     "type": "git",
     "url": "git+https://github.com/Akumzy/deduplicate.git"
   },
-  "author": "\"Akuma Isaac Akuma",
+  "author": "Akuma Isaac Akuma",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Akumzy/deduplicate/issues"

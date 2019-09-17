@@ -5,3 +5,5 @@ coverage
 __test__/bucket
 __test__/new-file.zip
 __test__/*.json
+example/*
+!example/index.js
