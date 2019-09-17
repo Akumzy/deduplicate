@@ -1,5 +1,5 @@
-import { Deduplicate, deduplicate, mergeBlocks, getHash, pipeline, createBlocks } from '../src'
-import { stat, writeFile, ensureDir, createWriteStream, createReadStream, pathExists, remove } from 'fs-extra'
+import { Deduplicate, deduplicate, mergeBlocks, getHash, createBlocks } from '../src'
+import { stat, writeFile, ensureDir, pathExists, remove } from 'fs-extra'
 import { join } from 'path'
 const file = join(__dirname, 'file.zip'),
   output = join(__dirname, 'new-file.zip'),
