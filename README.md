@@ -1,10 +1,11 @@
 # deduplicate
 
-[![Build Status](https://travis-ci.com/Akumzy/deduplicate.svg?branch=master)](https://travis-ci.com/Akumzy/deduplicate)
+[![Build Status](https://travis-ci.com/Akumzy/deduplicate.svg?branch=master)](https://travis-ci.com/Akumzy/deduplicate) 
+[![Coverage Status](https://coveralls.io/repos/github/Akumzy/deduplicate/badge.svg?branch=master)](https://coveralls.io/github/Akumzy/deduplicate?branch=master)
 
 ## Introduction
 
-This package provides you all the necessaries utility functions to implements file de-duplication ranging from splitting file content to blocks, generating hash and merging the file blocks together without corrupting the file.
+This package provides all the necessaries utility functions to implements file de-duplication ranging from splitting file content to blocks, generating hash and merging the file blocks together without corrupting the file.
 
 ## Installation
 
@@ -16,26 +17,29 @@ This package provides you all the necessaries utility functions to implements fi
 
 ## Usage
 
+
+
+- `deduplicate` a function that is used for creating file blocks and hash
 ```ts
-deduplicate(path: string, chunk?: number, algorithm?: string): Promise<Deduplicate.HashObject>
+deduplicate(path: string, chunk?: number, algorithm?: string): Promise<Dedupe.HashObject>
 ```
 
-Is use for creating file blocks and hash
-
+**parameters:**
 - path: The file absolute path.
 - chunk: Block size in bytes
   - default: `4 * 1024 * 1024` (4mb)
 - algorithm: Algorithm to use for hash file.
   - default: `sha256`
 
+
 **Example**
 
 ```js
-const filePath = 'path-to-file'
 const ONE_MAGA_BYTES = 1024 * 1024
-const info = await deduplicate(filePath, ONE_MAGA_BYTES)
+let filePath = 'path-to-file'
+let info = await deduplicate(filePath, ONE_MAGA_BYTES)
 console.log(info)
-// ->  {
+//  {
 //     hash: 'f27a663ef8df8091e94d07ba090449a34b68461b9af5557377423057ce902484',
 //     blocks: [
 //       {
@@ -46,4 +50,8 @@ console.log(info)
 //       }
 //     ]
 //   }
+```
+
+```ts
+createBlocks({ input, bucket, blocks }: Deduplicate.CreateBlocksOptions): Promise<void>;
 ```

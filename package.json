@@ -1,7 +1,7 @@
 {
   "name": "@akumzy/dd",
-  "version": "0.0.6",
-  "description": "File de-duplication utilities",
+  "version": "0.0.7",
+  "description": "File deduplication utilities",
   "main": "dist/index.js",
   "keywords": [
     "file",
@@ -10,7 +10,7 @@
     "chunk",
     "upload",
     "merge file",
-    "de-duplication"
+    "deduplication"
   ],
   "dependencies": {},
   "devDependencies": {
@@ -23,8 +23,7 @@
     "typescript": "^3.6.2"
   },
   "scripts": {
-    "test": "jest",
-    "coverage": "jest --coverage",
+    "test": "jest --coverage --coverageReporters=text-lcov",
     "build": "tsc -p ./tsconfig.json"
   },
   "repository": {
