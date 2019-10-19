@@ -119,22 +119,33 @@ export async function validateBlocks (bucket: string, fileObject: Dedupe.FileDed
     throw new Error(`${fileObject} is required`)
   }
   for (const block of fileObject.blocks) {
-    const p = join(bucket, block.hash)
-    // Check if block truly exists in filesystem
-    if (!(existsSync(p))) {
+    const isValid = await validateBlock(bucket, block)
+    if (!isValid) {
       return false
     }
-    const size = (await statAsync(p)).size,
-      blockSize = block.end - block.start
-    // Check if the block size it's same
-    if (blockSize !== size) {
-      return false
-    }
-    const hash = await getHash(p)
-    // Check if the block hash it's still the same
-    if (hash !== block.hash) {
-      return false
-    }
+  }
+  return true
+}
+/**
+ * Validate a single block
+ */
+export async function validateBlock (bucket: string, block: { size?: number, hash: string, start?: number, end?: number }) {
+  const p = join(bucket, block.hash)
+  // Check if block truly exists in filesystem
+
+  if (!(existsSync(p))) {
+    return false
+  }
+  const size = (await statAsync(p)).size,
+    blockSize = block.size ? block.size : block.end - block.start
+  // Check if the block size it's same
+  if (blockSize !== size) {
+    return false
+  }
+  const hash = await getHash(p)
+  // Check if the block hash it's still the same
+  if (hash !== block.hash) {
+    return false
   }
   return true
 }

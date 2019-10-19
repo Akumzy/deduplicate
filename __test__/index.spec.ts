@@ -1,10 +1,9 @@
-import { Dedupe, deduplicate, mergeBlocks, getHash, createBlocks, validateBlocks } from '../src'
-import { stat, writeFile, ensureDir, pathExists, remove, truncate, rename } from 'fs-extra'
+import { Dedupe, deduplicate, mergeBlocks, getHash, createBlocks, validateBlocks, validateBlock } from '../src'
+import { stat, ensureDir, pathExists, truncate, rename, removeSync } from 'fs-extra'
 import { join } from 'path'
 const file = join(__dirname, 'file.zip'),
   output = join(__dirname, 'new-file.zip'),
-  bucket = join(__dirname, 'bucket'),
-  firstJson = join(__dirname, 'block.json')
+  bucket = join(__dirname, 'bucket')
 let fileSize: number, blocks: Dedupe.FileDedupeObject
 
 describe("Generate file hash and it's blocks", () => {
@@ -14,7 +13,7 @@ describe("Generate file hash and it's blocks", () => {
   test('deduplicate file', async done => {
     fileSize = (await stat(file)).size
     blocks = await deduplicate(file)
-    await writeFile(firstJson, JSON.stringify(blocks, null, '  '))
+    expect(blocks).not.toBeUndefined()
     done()
   })
 
@@ -25,7 +24,7 @@ describe("Generate file hash and it's blocks", () => {
     })
   })
   test('create blocks, re-hash and compare', async done => {
-    await remove(bucket)
+    removeSync(bucket)
     await ensureDir(bucket)
     await createBlocks({ input: file, bucket, blocks: blocks.blocks })
     const newBlockHashs: string[] = []
@@ -43,7 +42,7 @@ describe("Generate file hash and it's blocks", () => {
   })
 
   test('rerun (create blocks, re-hash and compare) without passing blocks', async done => {
-    await remove(bucket)
+    removeSync(bucket)
     await ensureDir(bucket)
     await createBlocks({ input: file, bucket })
     const newBlockHashs: string[] = []
@@ -72,12 +71,20 @@ describe("Generate file hash and it's blocks", () => {
     expect(newBlocks).toEqual(blocks)
     done()
   })
-  test('Validate if file blocks truly written to filesystem', async done => {
+  test('Validate a block', async done => {
+    let b = blocks.blocks[0]
+    let block = { size: b.end - b.start, hash: b.hash }
+    let isValid = await validateBlock(bucket, block)
+    expect(isValid).toEqual(true)
+    done()
+  })
+  test('Validate if file blocks are truly written to bucket', async done => {
     let isValid = await validateBlocks(bucket, blocks)
     expect(isValid).toEqual(true)
     // check for missing path
-    await remove(join(bucket, blocks.blocks[3].hash))
+    removeSync(join(bucket, blocks.blocks[3].hash))
     isValid = await validateBlocks(bucket, blocks)
+
     expect(isValid).toEqual(false)
     // Check for block size
     await truncate(join(bucket, blocks.blocks[2].hash))
@@ -92,4 +99,5 @@ describe("Generate file hash and it's blocks", () => {
   test('Throw error if validateBlocks fileObject is not passed', async () => {
     await expect(validateBlocks(bucket, null)).rejects.toThrow()
   })
+
 })
