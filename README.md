@@ -3,6 +3,8 @@
 [![Build Status](https://travis-ci.com/Akumzy/deduplicate.svg?branch=master)](https://travis-ci.com/Akumzy/deduplicate) 
 [![Coverage Status](https://coveralls.io/repos/github/Akumzy/deduplicate/badge.svg?branch=master)](https://coveralls.io/github/Akumzy/deduplicate?branch=master)
 
+⚠️ Documentaion is very much incomplete but you can always checkout the test file for usage guide.
+
 ## Introduction
 
 This package provides all the necessaries utility functions to implements file de-duplication ranging from splitting file content to blocks, generating hash and merging the file blocks together without corrupting the file.
