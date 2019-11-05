@@ -50,7 +50,7 @@ export declare namespace Dedupe {
  * @param chunk is the size maximum size per chunk/block default: `4mb`
  * @param algorithm is the algorithm to use default: `sha256`
  */
-export async function deduplicate (path: string, chunk = 4 * 1024 * 1024, algorithm = 'sha256') {
+export async function deduplicate(path: string, chunk = 4 * 1024 * 1024, algorithm = 'sha256') {
   const size = (await promises.stat(path)).size,
     blocksSize = Math.ceil(size / chunk),
     blocks: Dedupe.Block[] = []
@@ -70,16 +70,14 @@ export async function deduplicate (path: string, chunk = 4 * 1024 * 1024, algori
     blocks.push(block)
   }
 
-  const hash = createHash(algorithm)
-    .update(Buffer.from(blocks.map(b => b.hash).join('')))
-    .digest('hex')
+  const hash = generateHashFromBlocks(blocks.map(({ hash }) => hash), algorithm)
   return { hash, blocks } as Dedupe.FileDedupeObject
 }
 /**
  * Deduplicate a file or use the passed blocks array to
  * write the chunk/blocks to dist.
  */
-export async function createBlocks ({ input, bucket, blocks }: Dedupe.CreateBlocksOptions) {
+export async function createBlocks({ input, bucket, blocks }: Dedupe.CreateBlocksOptions) {
   if (!blocks) {
     blocks = (await deduplicate(input)).blocks
   }
@@ -94,7 +92,7 @@ export async function createBlocks ({ input, bucket, blocks }: Dedupe.CreateBloc
 /**
  * Create a hash and return a file hash
  */
-export async function getHash (filePath: string, option: Dedupe.GetHashOption = { algorithm: 'sha256' }) {
+export async function getHash(filePath: string, option: Dedupe.GetHashOption = { algorithm: 'sha256' }) {
   const hash = createHash(option.algorithm).setEncoding('hex')
   await pipeline(createReadStream(filePath, { ...(option.readOption || {}), encoding: null }), hash)
   return hash.read() as string
@@ -102,7 +100,7 @@ export async function getHash (filePath: string, option: Dedupe.GetHashOption = 
 /**
  * Merge file blocks together and write it to disk
  */
-export async function mergeBlocks (op: Dedupe.MergeOptions) {
+export async function mergeBlocks(op: Dedupe.MergeOptions) {
   for (const [index, block] of op.blocks.entries()) {
     const path = join(block.bucket, block.hash)
     await pipeline(
@@ -114,7 +112,7 @@ export async function mergeBlocks (op: Dedupe.MergeOptions) {
 /**
  * Check if a file based on a givens blocks truly exists
  */
-export async function validateBlocks (bucket: string, fileObject: Dedupe.FileDedupeObject) {
+export async function validateBlocks(bucket: string, fileObject: Dedupe.FileDedupeObject) {
   if (!fileObject) {
     throw new Error(`${fileObject} is required`)
   }
@@ -129,11 +127,14 @@ export async function validateBlocks (bucket: string, fileObject: Dedupe.FileDed
 /**
  * Validate a single block
  */
-export async function validateBlock (bucket: string, block: { size?: number, hash: string, start?: number, end?: number }) {
+export async function validateBlock(
+  bucket: string,
+  block: { size?: number; hash: string; start?: number; end?: number }
+) {
   const p = join(bucket, block.hash)
   // Check if block truly exists in filesystem
 
-  if (!(existsSync(p))) {
+  if (!existsSync(p)) {
     return false
   }
   const size = (await statAsync(p)).size,
@@ -148,4 +149,12 @@ export async function validateBlock (bucket: string, block: { size?: number, has
     return false
   }
   return true
+}
+/**
+ * Generate file hash from it's blocks hash.
+ */
+export function generateHashFromBlocks(blocks: string[], algorithm = 'sha256') {
+  return createHash(algorithm)
+    .update(Buffer.from(blocks.join('')))
+    .digest('hex')
 }

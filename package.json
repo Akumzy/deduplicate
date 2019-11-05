@@ -1,6 +1,6 @@
 {
   "name": "@akumzy/dd",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "File de-duplication utilities",
   "main": "dist/index.js",
   "keywords": [
