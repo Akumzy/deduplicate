@@ -9,11 +9,7 @@ async function onChange (ev) {
     /**@type {HTMLInputElement} */
     const input = ev.target
     for (const file of input.files) {
-        console.time('URL');
-        let url = URL.createObjectURL(file)
-        console.timeEnd('URL');
-        console.log(url);
-        console.time('dedupe');
+
         const blocks = generateBlocks(file.size)
         const reader = new FileReader()
 
@@ -24,7 +20,6 @@ async function onChange (ev) {
                     resolve(reader.result)
                 }
                 reader.addEventListener('loadend', onloadend)
-
             });
 
         }
@@ -33,11 +28,9 @@ async function onChange (ev) {
             let result = await onReadEnd()
             blocks[index].hash = await hash(result)
         }
-        console.timeEnd('dedupe');
-        const text = blocks.reduce((a, { hash }) => a + hash, '')
-        const msgUint8 = new TextEncoder().encode(text);
-        fileHash = await hash(msgUint8)
-        console.log(fileHash);
+
+        fileHash = await hash(new TextEncoder().encode(blocks.reduce((a, { hash }) => a + hash, '')))
+
         console.log(blocks);
 
     }
@@ -47,10 +40,10 @@ async function onChange (ev) {
  * 
  * @param {number} size 
  */
- function generateBlocks (size) {
+function generateBlocks (size) {
     const chunk = 524288
-    const blocksSize = Math.ceil(size / chunk),
-        blocks = []
+    const blocksSize = Math.ceil(size / chunk)
+    const blocks = []
 
     for (let index = 0; index < blocksSize; index++) {
         const start = chunk * index,
@@ -71,7 +64,5 @@ async function onChange (ev) {
 }
 async function hash (buf) {
     const hashBuffer = await crypto.subtle.digest('SHA-256', buf);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    return hashHex;
+    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('')
 }
