@@ -21,7 +21,7 @@ export declare namespace Dedupe {
     }
   }
   interface Block {
-    order: number
+    order?: number
     start: number
     end: number
     hash: string
@@ -50,7 +50,7 @@ export declare namespace Dedupe {
  * @param chunk is the size maximum size per chunk/block default: `4mb`
  * @param algorithm is the algorithm to use default: `sha256`
  */
-export async function deduplicate(path: string, chunk = 4 * 1024 * 1024, algorithm = 'sha256') {
+export async function deduplicate(path: string, chunk = 500 * 1024, algorithm = 'sha256') {
   const size = (await promises.stat(path)).size,
     blocksSize = Math.ceil(size / chunk),
     blocks: Dedupe.Block[] = []
@@ -70,7 +70,10 @@ export async function deduplicate(path: string, chunk = 4 * 1024 * 1024, algorit
     blocks.push(block)
   }
 
-  const hash = generateHashFromBlocks(blocks.map(({ hash }) => hash), algorithm)
+  const hash = generateHashFromBlocks(
+    blocks.map(({ hash }) => hash),
+    algorithm
+  )
   return { hash, blocks } as Dedupe.FileDedupeObject
 }
 /**
@@ -112,11 +115,14 @@ export async function mergeBlocks(op: Dedupe.MergeOptions) {
 /**
  * Check if a file based on a givens blocks truly exists
  */
-export async function validateBlocks(bucket: string, fileObject: Dedupe.FileDedupeObject) {
-  if (!fileObject) {
-    throw new Error(`${fileObject} is required`)
+export async function validateBlocks(
+  bucket: string,
+  blocks: { size?: number; hash: string; start?: number; end?: number }[]
+) {
+  if (!Array.isArray(blocks)) {
+    throw new Error(`${blocks} is required to be an array of blocks`)
   }
-  for (const block of fileObject.blocks) {
+  for (const block of blocks) {
     const isValid = await validateBlock(bucket, block)
     if (!isValid) {
       return false

@@ -36,17 +36,17 @@ Dedupe.deduplicate(
 
 - path: File absolute path.
 - chunk: Block size in bytes
-  - default: `4 * 1024 * 1024` (4mb)
+  - default: `500 * 1024` (500kb)
 - algorithm: Algorithm to use for hash file.
   - default: `sha256`
 
 **Example**
 
 ```js
-const ONE_MAGA_BYTES = 1024 * 1024;
-let filePath = "path-to-file";
-let info = await deduplicate(filePath, ONE_MAGA_BYTES);
-console.log(info); // =>
+const ONE_MAGA_BYTES = 1024 * 1024
+let filePath = 'path-to-file'
+let info = await deduplicate(filePath, ONE_MAGA_BYTES)
+console.log(info) // =>
 //  {
 //     hash: 'f27a663ef8df8091e94d07ba090449a34b68461b9af5557377423057ce902484',
 //     blocks: [
@@ -75,5 +75,5 @@ await createBlocks({
   input: filePath,
   bucket: directoryToSaveBlocks,
   blocks: info.blocks
-});
+})
 ```
