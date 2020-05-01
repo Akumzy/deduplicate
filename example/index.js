@@ -4,7 +4,7 @@ const fs = require('fs-extra')
 async function main() {
   try {
     const filePath = join(__dirname, './/home/akumzy/loki/deduplication/__test__/file.mp4')
-    const ONE_MAGA_BYTES = 1024 * 1024 * 4
+    const ONE_MAGA_BYTES = 1024 * 1024
     const info = await deduplicate('/home/akumzy/loki/deduplication/__test__/file.mp4', ONE_MAGA_BYTES)
     await fs.writeJSON('./block.json', info)
   } catch (error) {
